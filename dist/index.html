@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <script>
+      // DO NOT REMOVE THIS SCRIPT
+      // 运行时动态计算 basename
+      (function() {
+        var pathname = window.location.pathname;
+        pathname = pathname.replace(/\/index\.html?$/, '');
+        var basename = pathname || '/';
+        if (basename !== '/' && basename.endsWith('/')) {
+          basename = basename.slice(0, -1);
+        }
+        window.__APP_BASENAME__ = basename;
+
+        // 设置 <base> 标签，让所有相对路径资源正确解析
+        var base = document.createElement('base');
+        // 如果 basename 是 '/'，直接设置为 '/'，否则添加 '/'
+        base.href = basename === '/' ? '/' : basename + '/';
+        document.head.appendChild(base);
+      })();
+    </script>
+
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>王健丰 - 相亲自我介绍</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --primary: #4B4B60;
+        --accent: #141480;
+        --neutral: #FFFFFF;
+        --bg-light: #f8fafc;
+        --bg-soft: #f1f5f9;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --border-light: #e2e8f0;
+        --shadow-subtle: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      }
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: var(--bg-light);
+        color: var(--text-primary);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+      
+      /* 顶部固定栏 */
+      .header {
+        background: var(--neutral);
+        border-bottom: 1px solid var(--border-light);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: var(--shadow-subtle);
+      }
+      
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem 0;
+        gap: 2rem;
+      }
+      
+      .profile-info {
+        flex: 1;
+      }
+      
+      .profile-name {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+      }
+      
+      .profile-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+      
+      .profile-detail {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--border-light);
+        box-shadow: var(--shadow-card);
+      }
+      
+      /* 标签云 */
+      .tags-section {
+        margin: 3rem 0;
+      }
+      
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--text-primary);
+      }
+      
+      .tags-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      
+      .tag {
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+      }
+      
+      .tag-blue {
+        background: #dbeafe;
+        color: #1e40af;
+        border-color: #bfdbfe;
+      }
+      
+      .tag-orange {
+        background: #fed7aa;
+        color: #c2410c;
+        border-color: #fdba74;
+      }
+      
+      .tag-green {
+        background: #dcfce7;
+        color: #166534;
+        border-color: #bbf7d0;
+      }
+      
+      .tag-yellow {
+        background: #fef3c7;
+        color: #92400e;
+        border-color: #fde047;
+      }
+      
+      .tag:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-card);
+      }
+      
+      .tag-expanded {
+        background: var(--neutral);
+        border-color: var(--border-light);
+        margin-top: 0.5rem;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        display: none;
+        width: 100%;
+      }
+      
+      /* 双栏布局 */
+      .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin: 3rem 0;
+      }
+      
+      .column {
+        background: var(--neutral);
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: var(--shadow-card);
+      }
+      
+      .column-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+      
+      .column-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      
+      /* 价值观卡片 */
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin: 3rem 0;
+      }
+      
+      .card {
+        background: var(--neutral);
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: var(--shadow-card);
+        text-align: center;
+      }
+      
+      .card-icon {
+        width: 3rem;
+        height: 3rem;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 1.5rem;
+      }
+      
+      .card-icon-blue {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+      
+      .card-icon-green {
+        background: #dcfce7;
+        color: #166534;
+      }
+      
+      .card-icon-purple {
+        background: #e9d5ff;
+        color: #7c3aed;
+      }
+      
+      .card-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+      }
+      
+      .card-content {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        line-height: 1.6;
+      }
+      
+      /* 兴趣爱好 */
+      .hobbies-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+      }
+      
+      .hobby-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: var(--neutral);
+        padding: 1.5rem;
+        border-radius: 1rem;
+        box-shadow: var(--shadow-card);
+      }
+      
+      .hobby-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 0.75rem;
+        flex-shrink: 0;
+      }
+      
+      .hobby-text {
+        flex: 1;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        line-height: 1.6;
+      }
+      
+      /* 择偶观对话气泡 */
+      .partner-section {
+        margin: 3rem 0;
+      }
+      
+      .chat-bubble {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 1rem;
+        padding: 2rem;
+        margin: 1rem 0;
+        position: relative;
+      }
+      
+      .chat-bubble::before {
+        content: '';
+        position: absolute;
+        left: -10px;
+        top: 2rem;
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-right: 10px solid #bae6fd;
+      }
+      
+      .chat-content {
+        color: var(--text-primary);
+        line-height: 1.8;
+      }
+      
+      .chat-content p {
+        margin-bottom: 1rem;
+      }
+      
+      /* 互动问答 */
+      .qa-section {
+        margin: 3rem 0;
+      }
+      
+      .question {
+        background: var(--neutral);
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: var(--shadow-card);
+        margin-bottom: 1.5rem;
+      }
+      
+      .question-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+      
+      .question-text {
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+      }
+      
+      .answer-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .answer-input {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid var(--border-light);
+        border-radius: 0.75rem;
+        font-size: 0.875rem;
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+      }
+      
+      .answer-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(20, 20, 128, 0.1);
+      }
+      
+      .submit-btn {
+        align-self: flex-end;
+        padding: 0.75rem 1.5rem;
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      
+      .submit-btn:hover {
+        background: #0f0f60;
+        transform: translateY(-1px);
+      }
+      
+      /* 底部联系方式 */
+      .footer {
+        background: var(--neutral);
+        border-top: 1px solid var(--border-light);
+        padding: 3rem 0;
+        text-align: center;
+      }
+      
+      .contact-info {
+        margin-bottom: 2rem;
+      }
+      
+      .contact-hint {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+      }
+      
+      .qr-code {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 1rem;
+        border-radius: 1rem;
+        box-shadow: var(--shadow-card);
+      }
+      
+      .contact-alternatives {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+      
+      /* 隐藏技能按钮 */
+      .hidden-skill-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 3rem;
+        height: 3rem;
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 1.25rem;
+        cursor: pointer;
+        box-shadow: var(--shadow-card);
+        transition: all 0.2s ease;
+        z-index: 40;
+      }
+      
+      .hidden-skill-btn:hover {
+        transform: scale(1.1);
+        background: #0f0f60;
+      }
+      
+      /* 欢迎提示 */
+      .welcome-toast {
+        position: fixed;
+        top: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--neutral);
+        padding: 1rem 2rem;
+        border-radius: 2rem;
+        box-shadow: var(--shadow-card);
+        border: 1px solid var(--border-light);
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        z-index: 60;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .welcome-toast.show {
+        opacity: 1;
+      }
+      
+      /* 小黑悬停提示 */
+      .cat-tooltip {
+        position: relative;
+        cursor: help;
+      }
+      
+      .cat-tooltip:hover::after {
+        content: '小黑超亲人，不怕生～';
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--text-primary);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        z-index: 30;
+      }
+      
+      /* 响应式设计 */
+      @media (max-width: 768px) {
+        .header-content {
+          flex-direction: column;
+          text-align: center;
+        }
+        
+        .profile-details {
+          grid-template-columns: 1fr;
+          text-align: left;
+        }
+        
+        .two-column {
+          grid-template-columns: 1fr;
+        }
+        
+        .cards-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .hobbies-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .hobby-item {
+          flex-direction: column;
+          text-align: center;
+        }
+        
+        .container {
+          padding: 0 0.75rem;
+        }
+      }
+      
+      /* 动画效果 */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .fade-in-up {
+        animation: fadeInUp 0.6s ease-out;
+      }
+      
+      /* 模态框 */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .modal.show {
+        display: flex;
+      }
+      
+      .modal-content {
+        background: var(--neutral);
+        padding: 2rem;
+        border-radius: 1rem;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      }
+      
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      
+      .modal-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-secondary);
+      }
+      
+      .modal-body {
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+    </style>
+    <script type="module" crossorigin>(function(){const n=document.createElement("link").relList;if(n&&n.supports&&n.supports("modulepreload"))return;for(const e of document.querySelectorAll('link[rel="modulepreload"]'))o(e);new MutationObserver(e=>{for(const t of e)if(t.type==="childList")for(const r of t.addedNodes)r.tagName==="LINK"&&r.rel==="modulepreload"&&o(r)}).observe(document,{childList:!0,subtree:!0});function s(e){const t={};return e.integrity&&(t.integrity=e.integrity),e.referrerPolicy&&(t.referrerPolicy=e.referrerPolicy),e.crossOrigin==="use-credentials"?t.credentials="include":e.crossOrigin==="anonymous"?t.credentials="omit":t.credentials="same-origin",t}function o(e){if(e.ep)return;e.ep=!0;const t=s(e);fetch(e.href,t)}})();function c(){const i=document.getElementById("welcomeToast");setTimeout(()=>{i.classList.add("show"),setTimeout(()=>{i.classList.remove("show")},3e3)},1e3)}function a(){const i=document.querySelectorAll(".tag");document.getElementById("tagExpansions"),i.forEach(n=>{n.addEventListener("click",function(){const s=this.dataset.description,o=this.nextElementSibling;if(o&&o.classList.contains("tag-expanded")){o.style.display="none",this.style.background=this.style.background||"";return}document.querySelectorAll(".tag-expanded").forEach(t=>{t.style.display="none"});let e=this.nextElementSibling;(!e||!e.classList.contains("tag-expanded"))&&(e=document.createElement("div"),e.className="tag-expanded",e.textContent=s,this.parentNode.insertBefore(e,this.nextSibling)),e.style.display="block",this.style.background="#f8fafc"})})}function l(){const i=document.getElementById("hiddenSkillBtn"),n=document.getElementById("skillModal"),s=n.querySelector(".modal-close");i.addEventListener("click",()=>{n.classList.add("show")}),s.addEventListener("click",()=>{n.classList.remove("show")}),n.addEventListener("click",o=>{o.target===n&&n.classList.remove("show")})}function d(){document.querySelectorAll(".answer-form").forEach(n=>{n.addEventListener("submit",function(s){s.preventDefault();const o=this.querySelector(".answer-input");if(!o.value.trim()){alert("请输入您的回答");return}const t=this.querySelector(".submit-btn"),r=t.textContent;t.textContent="提交中...",t.disabled=!0,setTimeout(()=>{t.textContent="✓ 已提交",t.style.background="#10b981",o.value="",setTimeout(()=>{t.textContent=r,t.disabled=!1,t.style.background=""},2e3)},1e3)})})}function u(){const i=new IntersectionObserver(n=>{n.forEach(s=>{s.isIntersecting&&(s.target.style.opacity="1",s.target.style.transform="translateY(0)")})},{threshold:.1,rootMargin:"0px 0px -50px 0px"});document.querySelectorAll(".fade-in-up").forEach(n=>{n.style.opacity="0",n.style.transform="translateY(20px)",n.style.transition="opacity 0.6s ease, transform 0.6s ease",i.observe(n)})}document.addEventListener("DOMContentLoaded",function(){c(),a(),l(),d(),u()});
+</script>
+  </head>
+  <body>
+    <!-- 欢迎提示 -->
+    <div id="welcomeToast" class="welcome-toast">
+      很高兴认识你，希望我们能聊到一块儿～
+    </div>
+
+    <!-- 顶部固定栏 -->
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="profile-info">
+            <h1 class="profile-name">王健丰</h1>
+            <div class="profile-details">
+              <div class="profile-detail">
+                <span>📅</span>
+                <span>33岁</span>
+              </div>
+              <div class="profile-detail">
+                <span>📏</span>
+                <span>181cm / 70kg（匀称身材）</span>
+              </div>
+              <div class="profile-detail">
+                <span>🎓</span>
+                <span>本科（济南大学）｜在职硕士（北京理工大学，双证）</span>
+              </div>
+              <div class="profile-detail">
+                <span>📍</span>
+                <span>北京市朝阳区</span>
+              </div>
+              <div class="profile-detail">
+                <span>💼</span>
+                <span>数据开发工程师（8年工作经验，作息规律，无频繁出差/加班）</span>
+              </div>
+              <div class="profile-detail">
+                <span>🏠</span>
+                <span>老家普通家庭，父母健朗，家庭氛围简单和睦，无养老压力，父母通情达理</span>
+              </div>
+            </div>
+          </div>
+          <img src="./assets/profile_photo-BNFJmeHb.jpeg" alt="王健丰" class="profile-avatar">
+        </div>
+      </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="container">
+      <!-- 个人标签云 -->
+      <section class="tags-section fade-in-up">
+        <h2 class="section-title">个人标签</h2>
+        <div class="tags-cloud">
+          <div class="tag tag-blue" data-description="遇事不急躁，喜欢理性沟通，待人做事都实打实">
+            🔹 理性真诚
+          </div>
+          <div class="tag tag-orange" data-description="工作和生活都有清晰安排，具备组建小家庭的基础">
+            🧡 踏实有规划
+          </div>
+          <div class="tag tag-green" data-description="嘴笨不会说安慰的话，但会用陪伴和拥抱传递关心">
+            💚 行动派温柔
+          </div>
+          <div class="tag tag-yellow" data-description="家里有只美短叫小黑，是日常解压的小伙伴">
+            💛 <span class="cat-tooltip">爱宠达人</span>
+          </div>
+          <div class="tag tag-blue" data-description="工作后坚持读在职硕士，始终保持学习的心态">
+            💙 持续成长
+          </div>
+        </div>
+        <div id="tagExpansions"></div>
+      </section>
+
+      <!-- 职业与生活 -->
+      <section class="two-column fade-in-up">
+        <div class="column">
+          <h3 class="column-title">💼 职业信息</h3>
+          <img src="./assets/work_env-CgEKH1xF.jpeg" alt="工作环境" class="column-image">
+          <div style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6;">
+            <p><strong>🔧 工作内容：</strong>数据开发工作，工作中认真负责，拒绝无效加班，兼顾效率与生活。</p>
+            <p><strong>📈 职业规划：</strong>短期深耕现有领域，提升技术核心竞争力；3年内计划优化工作节奏，偏向弹性办公，为未来家庭留出更多时间；长期有清晰的收入增长与理财规划，保障小家庭的稳定生活。</p>
+          </div>
+        </div>
+        <div class="column">
+          <h3 class="column-title">🏠 生活日常</h3>
+          <img src="./assets/life_with_cat-CVM5GuIY.jpeg" alt="与小黑的生活" class="column-image">
+          <div style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6;">
+            <p><strong>🍳 日常节奏：</strong>工作日下班先陪小黑玩会儿，再刷会视频或玩会游戏；周末喜欢宅家和小黑晒太阳、玩游戏，也喜欢爬山和溜达。</p>
+            <p><strong>🐱 毛孩日常：</strong>家里的美短小黑特别粘人，每天下班开门都能收到它的"迎接礼"；未来还计划再养一只边牧，喜欢家里有毛孩子热热闹闹的氛围。</p>
+            <p><strong>🌟 性格细节：</strong>我偏理性，但不冷漠；不太会说甜言蜜语，要是你不开心，我可能说不出华丽的安慰话，但会认真问一句"你还好吗"，给你一个拥抱，安安静静陪着你。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 价值观与未来规划 -->
+      <section class="fade-in-up">
+        <h2 class="section-title">价值观与未来规划</h2>
+        <div class="cards-grid">
+          <div class="card">
+            <div class="card-icon card-icon-blue">🏠</div>
+            <h3 class="card-title">短期规划（1-3年）</h3>
+            <p class="card-content">夯实经济基础，优化工作与生活的平衡；和未来伴侣一起商量定居细节，打造属于我们的温馨小家；定期带父母出门旅行，尽一份孝心。</p>
+          </div>
+          <div class="card">
+            <div class="card-icon card-icon-green">🤝</div>
+            <h3 class="card-title">核心价值观</h3>
+            <p class="card-content">真诚至上，家庭第一。感情里没有输赢，只有互相迁就；孝顺父母但不愚孝，清晰划分原生家庭与小家庭的边界，和伴侣互相尊重、彼此支持。</p>
+          </div>
+          <div class="card">
+            <div class="card-icon card-icon-purple">⭐</div>
+            <h3 class="card-title">长期愿景与育儿理念</h3>
+            <p class="card-content">希望组建一个"遇事能商量、日常有温度"的家庭，闲时一起撸猫遛狗，忙时互相打气。若未来有孩子，更认同"快乐教育、能力优先"，不想让孩子被成绩绑架，愿他能自由快乐成长。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 兴趣爱好 -->
+      <section class="fade-in-up">
+        <h2 class="section-title">兴趣爱好</h2>
+        <div class="hobbies-grid">
+          <div class="hobby-item">
+            <img src="./assets/hobby1_cat-3cLsYr-i.jpeg" alt="和小黑" class="hobby-image">
+            <div class="hobby-text">小黑是我的治愈小能手，不管工作多累，撸会儿猫就满血复活～</div>
+          </div>
+          <div class="hobby-item">
+            <img src="./assets/hobby2_reading-Y1XRoeHp.jpeg" alt="阅读学习" class="hobby-image">
+            <div class="hobby-text">除了编程，喜欢读一些社科类书籍，偶尔也会研究新的技术框架，保持学习的热情。</div>
+          </div>
+          <div class="hobby-item">
+            <img src="./assets/hobby3_street-ln4olV80.jpeg" alt="街景记录" class="hobby-image">
+            <div class="hobby-text">喜欢用手机记录生活里的小美好，比如路边的晚霞、街角的小店，觉得平凡的日子也很珍贵。</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 择偶观 -->
+      <section class="partner-section fade-in-up">
+        <h2 class="section-title">择偶观</h2>
+        <div class="chat-bubble">
+          <div class="chat-content">
+            <p>💬 我对另一半的期待：</p>
+            <p>1. 内心善良，待人真诚，日常能保持积极乐观的心态（偶尔emo也没关系，我可以陪着你）；</p>
+            <p>2. 有自己的工作和小世界，不依附他人，我们能成为彼此的依靠，也能各自发光；</p>
+            <p>3. 能接纳我"嘴笨"的温柔，沟通时愿意好好说话，遇到分歧不冷战、不指责；</p>
+            <p>4. 不排斥宠物，要是也喜欢毛孩子就更好啦～ 不要求完美，彼此合拍、聊得来最重要。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 互动问答 -->
+      <section class="qa-section fade-in-up">
+        <h2 class="section-title">互动问答</h2>
+        <div class="question">
+          <h3 class="question-title">问题1：宠物情缘</h3>
+          <p class="question-text">你喜欢小动物吗？如果喜欢，更偏爱猫还是狗？有没有养宠物的小故事～</p>
+          <form class="answer-form" data-question="1">
+            <textarea class="answer-input" placeholder="分享你的想法..."></textarea>
+            <button type="submit" class="submit-btn">提交回答</button>
+          </form>
+        </div>
+        <div class="question">
+          <h3 class="question-title">问题2：周末时光</h3>
+          <p class="question-text">你周末更爱宅家撸猫追剧，还是出门逛吃散步？有私藏的宝藏小店可以推荐吗？</p>
+          <form class="answer-form" data-question="2">
+            <textarea class="answer-input" placeholder="分享你的想法..."></textarea>
+            <button type="submit" class="submit-btn">提交回答</button>
+          </form>
+        </div>
+        <div class="question">
+          <h3 class="question-title">问题3：相处模式</h3>
+          <p class="question-text">你心中理想的相处模式是什么样的？是每天黏在一起，还是保持适度的个人空间？</p>
+          <form class="answer-form" data-question="3">
+            <textarea class="answer-input" placeholder="分享你的想法..."></textarea>
+            <button type="submit" class="submit-btn">提交回答</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- 底部联系方式 -->
+    <footer class="footer">
+      <div class="container">
+        <div class="contact-info">
+          <p class="contact-hint">如果看完这些，你觉得我们有聊得来的可能，欢迎加我微信～</p>
+          <p class="contact-hint">备注：来自自我介绍网页</p>
+          <img src="./assets/wechat_qr-Dz2Iqt9B.jpeg" alt="微信二维码" class="qr-code">
+          <div class="contact-alternatives">
+            <p>📧 邮箱：wangjianfeng@bluecity.com</p>
+            <p>📖 豆瓣ID：王健丰（偶尔分享读书/撸猫日常）</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- 隐藏技能按钮 -->
+    <button id="hiddenSkillBtn" class="hidden-skill-btn" title="隐藏技能">💻</button>
+
+    <!-- 隐藏技能模态框 -->
+    <div id="skillModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">💻 隐藏技能</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>✨ 除了日常工作技能，我还会：</p>
+          <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+            <li>🕷️ 写爬虫爬宠物养护攻略</li>
+            <li>⚙️ 给你的电子设备做个性化设置</li>
+            <li>💝 写简单的情侣打卡小程序</li>
+          </ul>
+          <p>技术让生活更美好～</p>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
