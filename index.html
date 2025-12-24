@@ -47,8 +47,6 @@
       .header {
         background: var(--neutral);
         border-bottom: 1px solid var(--border-light);
-        position: sticky;
-        top: 0;
         z-index: 50;
         box-shadow: var(--shadow-subtle);
       }
@@ -66,7 +64,7 @@
       }
       
       .profile-name {
-        font-size: 1.875rem;
+        font-size: 1.5rem; /* 缩小姓名字体 */
         font-weight: 700;
         color: var(--text-primary);
         margin-bottom: 0.5rem;
@@ -87,8 +85,8 @@
       }
       
       .profile-avatar {
-        width: 120px;
-        height: 120px;
+        width: 100px; /* 缩小头像尺寸 */
+        height: 100px;
         border-radius: 50%;
         object-fit: cover;
         border: 3px solid var(--border-light);
@@ -486,6 +484,7 @@
         .header-content {
           flex-direction: column;
           text-align: center;
+          padding: 1rem 0; /* 减少上下内边距 */
         }
         
         .profile-details {
@@ -670,7 +669,7 @@
           <h3 class="column-title">🏠 生活日常</h3>
           <img src="./assets/life_with_cat.jpeg" alt="与小黑的生活" class="column-image">
           <div style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6;">
-            <p><strong>🍳 日常节奏：</strong>工作日下班先陪小黑玩会儿，再刷会视频或玩会游戏；周末喜欢宅家和小黑晒太阳、玩游戏，也喜欢爬山和做饭。</p>
+            <p><strong>🍳 日常节奏：</strong>工作日下班先陪小黑玩会儿，再刷会视频或玩会游戏；周末喜欢宅家和小黑晒太阳、玩游戏，也喜欢爬山和。</p>
             <p><strong>🐱 毛孩日常：</strong>家里的美短小黑特别粘人，每天下班开门都能收到它的"迎接礼"；未来还计划再养一只边牧，喜欢家里有毛孩子热热闹闹的氛围。</p>
             <p><strong>🌟 性格细节：</strong>我偏理性，但不冷漠；不太会说甜言蜜语，要是你不开心，我可能说不出华丽的安慰话，但会认真问一句"你还好吗"，给你一个拥抱，安安静静陪着你。</p>
           </div>
